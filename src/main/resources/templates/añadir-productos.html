@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Nuevo Producto</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
+    <link rel="stylesheet" th:href="@{/estilos/navbar.css}" />
+    <link rel="stylesheet" th:href="@{/estilos/footer.css}" />
+    <link rel="stylesheet" th:href="@{/estilos/añadir-productos.css}" />
+  </head>
+  <body>
+    <header th:replace="~{fragments/layout :: navbar}"></header>
+
+    <div class="container mt-4">
+      <h1 class="main-title">✨ Registrar Nuevo Producto</h1>
+
+      <div class="form-container">
+        <form th:action="@{/productos/guardar}" th:object="${producto}" method="post" id="productoForm">
+
+
+          <!-- Información Básica -->
+          <div class="section-card">
+            <h3 class="section-title">
+              <i class="bi bi-box-seam"></i>
+              Información Básica
+            </h3>
+            <div class="row">
+              <div class="col-md-4 mb-3">
+                <label class="form-label required-field">Tipo/Categoría</label>
+                <select class="form-select" name="tipo" id="tipo" required>
+                  <option value="">Seleccionar categoría...</option>
+                  <option value="Hombres">👨 Hombres</option>
+                  <option value="Niños">👶 Niños</option>
+                  <option value="Anime">
+                    🎌 Colecciones/Anime
+                  </option>
+                  <option value="Deporte">
+                    ⚽ Colecciones/Deporte
+                  </option>
+                </select>
+              </div>
+              <div class="col-md-4 mb-3">
+                <label class="form-label">Marca</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  name ="marca"
+                  id="marca"
+                  placeholder="Marca del producto"
+                />
+              </div>
+              <div class="col-md-4 mb-3">
+                <label class="form-label">SKU</label>
+                <div class="sku-container">
+                  <input
+                    type="text"
+                    class="form-control"
+                    name ="sku"
+                    id="sku"
+                    placeholder="Se genera automáticamente"
+                    readonly
+                  />
+                  <button
+                    type="button"
+                    class="sku-toggle"
+                    id="skuToggle"
+                    title="Editar SKU manualmente"
+                  >
+                    <i class="bi bi-pencil"></i>
+                  </button>
+                </div>
+                <small class="text-muted"
+                  >El SKU se genera automáticamente. Haz clic en el lápiz para
+                  editarlo manualmente.</small
+                >
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label required-field"
+                >Nombre del Producto</label
+              >
+              <input
+                type="text"
+                class="form-control"
+                name = "nombre"
+                id="nombre"
+                required
+                placeholder="Nombre descriptivo del producto"
+              />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Imagen (URL)</label>
+              <input
+                type="url"
+                class="form-control"
+                name = "imagen"
+                placeholder="https://ejemplo.com/imagen.jpg"
+              />
+            </div>
+          </div>
+
+          <!-- Precios y Descuentos -->
+          <div class="section-card">
+            <h3 class="section-title">
+              <i class="bi bi-currency-dollar"></i>
+              Precios y Descuentos
+            </h3>
+            <div class="row">
+              <div class="col-md-4 mb-3">
+                <label class="form-label required-field">Precio Original</label>
+                <div class="input-group">
+                  <span class="input-group-text">S/</span>
+                  <input
+                    type="number"
+                    step="0.01"
+                    class="form-control"
+                    name = "precio"
+                    id="precio"
+                    required
+                    placeholder="0.00"
+                  />
+                </div>
+              </div>
+              <div class="col-md-4 mb-3">
+                <label class="form-label">Descuento (%)</label>
+                <div class="input-group">
+                  <input
+                    type="number"
+                    min="0"
+                    max="100"
+                    class="form-control"
+                    id="descuentoInput"
+                    placeholder="0"
+                  />
+                  <span class="input-group-text">%</span>
+                </div>
+                <!-- Campo oculto que se enviará al servidor con el formato correcto -->
+                <input type="hidden" name="descuento" id="descuentoHidden" />
+              </div>
+              <div class="col-md-4 mb-3">
+                <label class="form-label">Precio Final</label>
+                <div class="input-group">
+                  <span class="input-group-text">S/</span>
+                  <input
+                    type="number"
+                    step="0.01"
+                    class="form-control"
+                    name = "precioFinal"
+                    id="precioFinal"
+                    readonly
+                    style="background-color: #f8f9fa"
+                  />
+                </div>
+                <div
+                  id="discountInfo"
+                  class="discount-info"
+                  style="display: none"
+                >
+                  <i class="bi bi-tag-fill"></i>
+                  Ahorro: S/ <span id="ahorroMonto">0.00</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Campos ocultos para enviar valores correctos -->
+            <input
+              type="hidden"
+              name = "precioConDescuento"
+              id="precioConDescuentoHidden"
+            />
+            <input
+              type="hidden"
+              name = "tieneDescuento"
+              id="tieneDescuentoHidden"
+              value="false"
+            />
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label required-field"
+                  >Costo de Adquisición</label
+                >
+                <div class="input-group">
+                  <span class="input-group-text">S/</span>
+                  <input
+                    type="number"
+                    step="0.01"
+                    class="form-control"
+                    name = "costoAdquisicion"
+                    id="costoAdquisicion"
+                    required
+                    placeholder="0.00"
+                  />
+                </div>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Margen de Ganancia</label>
+                <div id="margenDisplay" class="price-display">
+                  Margen: <span id="margenPorcentaje">0%</span> - Ganancia: S/
+                  <span id="gananciaMoneto">0.00</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Inventario -->
+          <div class="section-card">
+            <h3 class="section-title">
+              <i class="bi bi-boxes"></i>
+              Control de Inventario
+            </h3>
+            <div class="row">
+              <div class="col-md-4 mb-3">
+                <label class="form-label required-field">Stock Actual</label>
+                <input
+                  type="number"
+                  min="0"
+                  class="form-control"
+                  name = "stock"
+                  id="stock"
+                  required
+                  placeholder="0"
+                />
+              </div>
+              <div class="col-md-4 mb-3">
+                <label class="form-label">Stock Mínimo</label>
+                <input
+                  type="number"
+                  min="0"
+                  class="form-control"
+                  name = "stockMinimo"
+                  id="stockMinimo"
+                  placeholder="0"
+                />
+              </div>
+              <div class="col-md-4 mb-3">
+                <label class="form-label">Ubicación en Almacén</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  name ="ubicacionAlmacen"
+                  placeholder="Ej: A-1-B"
+                />
+              </div>
+            </div>
+            <div id="stockAlert" class="stock-alert" style="display: none">
+              <i class="bi bi-exclamation-triangle"></i>
+              ¡Atención! El stock actual está por debajo del mínimo recomendado.
+            </div>
+          </div>
+
+          <!-- Proveedor y Configuración -->
+          <div class="section-card">
+            <h3 class="section-title">
+              <i class="bi bi-gear"></i>
+              Configuración y Proveedor
+            </h3>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Proveedor</label>
+                <div class="input-group">
+                  <select
+                    class="form-select"
+                    name="proveedor.id"
+                    id="proveedorSelect"
+                  >
+                    <option value="">Seleccionar proveedor...</option>
+                    <option
+                      th:each="prov : ${proveedores}"
+                      th:value="${prov.id}"
+                      th:text="${prov.nombre}"
+                    ></option>
+                  </select>
+                  <button
+                    class="btn btn-outline-primary"
+                    type="button"
+                    data-bs-toggle="modal"
+                    data-bs-target="#nuevoProveedorModal"
+                  >
+                    <i class="bi bi-plus-circle"></i> Nuevo
+                  </button>
+                </div>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Temporada</label>
+                <select class="form-select" name="temporada">
+                  <option value="">Seleccionar temporada...</option>
+                  <option value="Verano">Verano</option>
+                  <option value="Otoño">Otoño</option>
+                  <option value="Invierno">Invierno</option>
+                  <option value="Primavera">Primavera</option>
+                  <option value="Todo el año">Todo el año</option>
+                </select>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-4 mb-3">
+                <label class="form-label">¿Envío Gratis?</label>
+                <select class="form-select" name="envioGratis">
+                  <option value="true">✅ Sí</option>
+                  <option value="false">❌ No</option>
+                </select>
+              </div>
+              <div class="col-md-4 mb-3">
+                <label class="form-label">Rating Interno</label>
+                <select class="form-select" name="ratingInterno">
+                  <option value="">Seleccionar...</option>
+                  <option value="1">⭐ 1 estrella</option>
+                  <option value="2">⭐⭐ 2 estrellas</option>
+                  <option value="3">⭐⭐⭐ 3 estrellas</option>
+                  <option value="4">⭐⭐⭐⭐ 4 estrellas</option>
+                  <option value="5">⭐⭐⭐⭐⭐ 5 estrellas</option>
+                </select>
+              </div>
+              <div class="col-md-4 mb-3">
+                <label class="form-label">¿Producto Habilitado?</label>
+                <select class="form-select" name="habilitado">
+                  <option value="true">✅ Habilitado</option>
+                  <option value="false">❌ Deshabilitado</option>
+                </select>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Comentarios Internos</label>
+              <textarea
+                class="form-control"
+                name="comentariosInternos"
+                rows="3"
+                placeholder="Notas internas sobre el producto..."
+              ></textarea>
+            </div>
+          </div>
+
+          <!-- Botones -->
+          <div class="text-center">
+            <button type="submit" class="btn btn-primary btn-lg me-3">
+              <i class="bi bi-check-circle"></i>
+              Guardar Producto
+            </button>
+            <a href="/productos" class="btn btn-secondary btn-lg">
+              <i class="bi bi-x-circle"></i>
+              Cancelar
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const tipoSelect = document.getElementById("tipo");
+        const marcaInput = document.getElementById("marca");
+        const nombreInput = document.getElementById("nombre");
+        const skuInput = document.getElementById("sku");
+        const skuToggle = document.getElementById("skuToggle");
+        const precioInput = document.getElementById("precio");
+        const descuentoInput = document.getElementById("descuentoInput");
+        const descuentoHidden = document.getElementById("descuentoHidden");
+        const precioFinalInput = document.getElementById("precioFinal");
+        const precioConDescuentoHidden = document.getElementById(
+          "precioConDescuentoHidden"
+        );
+        const tieneDescuentoHidden = document.getElementById(
+          "tieneDescuentoHidden"
+        );
+        const costoInput = document.getElementById("costoAdquisicion");
+        const stockInput = document.getElementById("stock");
+        const stockMinimoInput = document.getElementById("stockMinimo");
+
+        const discountInfo = document.getElementById("discountInfo");
+        const ahorroMonto = document.getElementById("ahorroMonto");
+        const margenPorcentaje = document.getElementById("margenPorcentaje");
+        const gananciaMoneto = document.getElementById("gananciaMoneto");
+        const stockAlert = document.getElementById("stockAlert");
+
+        let isSkuManual = false;
+
+        // Función para convertir a mayúsculas automáticamente
+        function convertirAMayusculas(input) {
+          input.addEventListener("input", function() {
+            const cursorPosition = this.selectionStart;
+            this.value = this.value.toUpperCase();
+            this.setSelectionRange(cursorPosition, cursorPosition);
+          });
+        }
+
+        // Aplicar conversión a mayúsculas a los campos específicos
+        convertirAMayusculas(marcaInput);
+        convertirAMayusculas(nombreInput);
+
+        // Generar SKU automáticamente
+        function generarSKU() {
+          if (isSkuManual) return;
+
+          const tipo = tipoSelect.value;
+          const marca = marcaInput.value;
+          const nombre = nombreInput.value;
+
+          let sku = "";
+
+          // Prefijo basado en tipo
+          switch (tipo) {
+            case "Hombres":
+              sku += "HOM";
+              break;
+            case "Niños":
+              sku += "NIN";
+              break;
+            case "Anime":
+              sku += "ANI";
+              break;
+            case "Deporte":
+              sku += "DEP";
+              break;
+            default:
+              sku += "PRO";
+          }
+
+          // Agregar marca (primeras 3 letras)
+          if (marca && marca.length > 0) {
+            sku += marca
+              .substring(0, 3)
+              .toUpperCase()
+              .replace(/[^A-Z]/g, "");
+          }
+
+          // Agregar parte del nombre (primeras 3 letras de la primera palabra)
+          if (nombre && nombre.length > 0) {
+            const firstWord = nombre.split(" ")[0];
+            sku += firstWord
+              .substring(0, 3)
+              .toUpperCase()
+              .replace(/[^A-Z]/g, "");
+          }
+
+          // Agregar timestamp para unicidad
+          const timestamp = Date.now().toString().slice(-4);
+          sku += timestamp;
+
+          skuInput.value = sku;
+        }
+
+        // Toggle SKU manual/automático
+        skuToggle.addEventListener("click", function () {
+          isSkuManual = !isSkuManual;
+
+          if (isSkuManual) {
+            skuInput.readOnly = false;
+            skuInput.style.backgroundColor = "white";
+            skuInput.placeholder = "Ingrese SKU manualmente";
+            skuToggle.innerHTML = '<i class="bi bi-arrow-clockwise"></i>';
+            skuToggle.title = "Volver a generación automática";
+          } else {
+            skuInput.readOnly = true;
+            skuInput.style.backgroundColor = "#f8f9fa";
+            skuInput.placeholder = "Se genera automáticamente";
+            skuToggle.innerHTML = '<i class="bi bi-pencil"></i>';
+            skuToggle.title = "Editar SKU manualmente";
+            generarSKU();
+          }
+        });
+
+        // Calcular precio con descuento
+        function calcularPrecioConDescuento() {
+          const precio = parseFloat(precioInput.value) || 0;
+          const descuento = parseFloat(descuentoInput.value) || 0;
+
+          if (precio > 0) {
+            if (descuento > 0) {
+              // Hay descuento
+              const precioConDescuento = precio - (precio * descuento) / 100;
+              const ahorro = precio - precioConDescuento;
+
+              precioFinalInput.value = precioConDescuento.toFixed(2);
+              precioConDescuentoHidden.value = precioConDescuento.toFixed(2);
+              tieneDescuentoHidden.value = "true";
+              
+              // Preparar el valor del descuento con el símbolo %
+              descuentoHidden.value = descuento + "%";
+
+              ahorroMonto.textContent = ahorro.toFixed(2);
+              discountInfo.style.display = "block";
+            } else {
+              // No hay descuento
+              precioFinalInput.value = precio.toFixed(2);
+              precioConDescuentoHidden.value = ""; // Enviar vacío para que sea null en BD
+              tieneDescuentoHidden.value = "false";
+              descuentoHidden.value = ""; // Enviar vacío
+
+              discountInfo.style.display = "none";
+            }
+          } else {
+            precioFinalInput.value = "";
+            precioConDescuentoHidden.value = "";
+            tieneDescuentoHidden.value = "false";
+            descuentoHidden.value = "";
+            discountInfo.style.display = "none";
+          }
+
+          calcularMargen();
+        }
+
+        // Calcular margen de ganancia
+        function calcularMargen() {
+          const precioFinal = parseFloat(precioFinalInput.value) || 0;
+          const costo = parseFloat(costoInput.value) || 0;
+
+          if (precioFinal > 0 && costo > 0) {
+            const ganancia = precioFinal - costo;
+            const margen = (ganancia / precioFinal) * 100;
+
+            margenPorcentaje.textContent = margen.toFixed(1) + "%";
+            gananciaMoneto.textContent = ganancia.toFixed(2);
+          } else {
+            margenPorcentaje.textContent = "0%";
+            gananciaMoneto.textContent = "0.00";
+          }
+        }
+
+        // Verificar stock
+        function verificarStock() {
+          const stock = parseInt(stockInput.value) || 0;
+          const stockMinimo = parseInt(stockMinimoInput.value) || 0;
+
+          if (stockMinimo > 0 && stock <= stockMinimo) {
+            stockAlert.style.display = "block";
+          } else {
+            stockAlert.style.display = "none";
+          }
+        }
+
+        // Event listeners
+        tipoSelect.addEventListener("change", generarSKU);
+        marcaInput.addEventListener("input", generarSKU);
+        nombreInput.addEventListener("input", generarSKU);
+        precioInput.addEventListener("input", calcularPrecioConDescuento);
+        descuentoInput.addEventListener("input", calcularPrecioConDescuento);
+        costoInput.addEventListener("input", calcularMargen);
+        stockInput.addEventListener("input", verificarStock);
+        stockMinimoInput.addEventListener("input", verificarStock);
+
+        // Validación del formulario antes de enviar
+        document
+          .getElementById("productoForm")
+          .addEventListener("submit", function (e) {
+            const descuentoNumerico = parseFloat(descuentoInput.value);
+
+            if (!descuentoNumerico || descuentoNumerico <= 0) {
+              // Setear valores vacíos para que lleguen como null
+              descuentoHidden.value = "";
+              precioConDescuentoHidden.value = "";
+            } else {
+              // Asegurarse de que el descuento se envíe con el símbolo %
+              descuentoHidden.value = descuentoNumerico + "%";
+            }
+          });
+
+        // Inicializar
+        generarSKU();
+        calcularPrecioConDescuento();
+        verificarStock();
+      });
+    </script>
+    <!-- Modal para nuevo proveedor -->
+    <div
+      class="modal fade"
+      id="nuevoProveedorModal"
+      tabindex="-1"
+      aria-labelledby="nuevoProveedorLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <form class="modal-content" method="post" action="/proveedores/guardar">
+          <input type="hidden" name="redirect" value="nuevo" />
+          <div class="modal-header">
+            <h5 class="modal-title" id="nuevoProveedorLabel">
+              Nuevo Proveedor
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Cerrar"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label class="form-label">Nombre</label>
+              <input type="text" class="form-control" name="nombre" required />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">RUC</label>
+              <input type="text" class="form-control" name="ruc" />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Dirección</label>
+              <input type="text" class="form-control" name="direccion" />
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cancelar
+            </button>
+            <button type="submit" class="btn btn-primary">
+              Guardar Proveedor
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

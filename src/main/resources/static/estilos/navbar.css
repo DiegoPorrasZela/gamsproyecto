@@ -1,0 +1,46 @@
+.navbar .container-fluid {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.user-icons {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-left: auto;
+}
+
+@media (max-width: 575.98px) {
+  .navbar-brand {
+    order: 1;
+  }
+
+  .navbar-toggler {
+    order: 0;
+    margin-right: 10px;
+  }
+
+  .user-icons {
+    order: 2;
+  }
+
+  .navbar-collapse {
+    order: 3;
+    width: 100%;
+  }
+}
+
+@media (min-width: 576px) {
+  .navbar-brand {
+    margin-right: 20px;
+  }
+
+  .navbar-collapse {
+    flex-grow: 1;
+  }
+
+  .user-icons {
+    margin-left: 20px;
+  }
+}

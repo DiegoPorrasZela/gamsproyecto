@@ -1,0 +1,91 @@
+main {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body main {
+  background: linear-gradient(135deg, #ece9e6, #ffffff);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-family: "Segoe UI", sans-serif;
+}
+
+main .container {
+  width: 900px;
+  max-width: 100%;
+  background: white;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  border-radius: 15px;
+  display: flex;
+  overflow: hidden;
+}
+
+main .form-container {
+  flex: 1;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background-color: #fdfdfd;
+}
+
+main h2 {
+  font-size: 24px;
+  color: #333;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+main form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+main input {
+  padding: 0.8rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+}
+
+main button {
+  padding: 0.8rem;
+  background-color: #222;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+main button:hover {
+  background-color: #444;
+}
+
+main .exit-button {
+  background-color: #dc3545;
+  margin-top: 1rem;
+}
+
+main .social-login {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+main .social-login i {
+  font-size: 1.5rem;
+  color: #333;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+main .social-login i:hover {
+  color: #007bff;
+}

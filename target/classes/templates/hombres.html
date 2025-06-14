@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Hombres - GAMS Store</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
+    <link rel="stylesheet" th:href="@{/estilos/navbar.css}" />
+    <link rel="stylesheet" th:href="@{/estilos/items-productos.css}" />
+    <link rel="stylesheet" th:href="@{/estilos/footer.css}" />
+  </head>
+  <body>
+    <header th:replace="~{fragments/layout :: navbar}"></header>
+    <main class="container my-5">
+      <h2 class="mb-4">Productos de Hombres Destacados</h2>
+
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+        <div class="col" th:each="producto : ${productos}">
+          <div class="card product-card h-100 border-0 shadow-sm">
+            <div class="position-relative">
+              <!-- Badge de descuento -->
+              <div
+                class="discount-badge"
+                th:if="${producto.descuento != null and producto.descuento != ''}"
+                th:text="'-' + ${producto.descuento}"
+              ></div>
+
+              <!-- Imagen -->
+              <div class="product-img-container">
+                <img
+                  th:src="${producto.imagen}"
+                  th:alt="${producto.nombre}"
+                  class="product-img"
+                />
+              </div>
+            </div>
+
+            <div class="card-body d-flex flex-column">
+              <!-- Marca -->
+              <div
+                class="brand text-uppercase"
+                th:text="${producto.marca} ?: 'GENÉRICO'"
+              ></div>
+
+              <!-- Nombre -->
+              <h5 class="product-title mb-2" th:text="${producto.nombre}"></h5>
+
+              <!-- Envío gratis -->
+              <div
+                class="mb-2"
+                th:if="${producto.envioGratis != null and producto.envioGratis}"
+              >
+                <span class="free-shipping">
+                  <i class="bi bi-truck"></i> Envío gratis en APP
+                </span>
+              </div>
+
+              <!-- Precios CORREGIDOS Y SIMPLIFICADOS -->
+              <div class="d-flex align-items-center mb-3">
+                <!-- Precio actual (con descuento si aplica) -->
+                <span
+                  class="price me-2"
+                  th:text="'S/ ' + ${#numbers.formatDecimal(
+                                      (producto.precioConDescuento != null ? producto.precioConDescuento : producto.precio), 
+                                      1, 
+                                      2,'POINT'
+                                  )}"
+                ></span>
+
+                <!-- Precio original tachado (solo si hay descuento) -->
+                <span
+                  class="old-price text-muted text-decoration-line-through"
+                  th:if="${producto.precioConDescuento != null}"
+                  th:text="'S/ ' + ${#numbers.formatDecimal(producto.precio, 1, 2,'POINT')}"
+                ></span>
+              </div>
+
+              <!-- Botones -->
+              <div class="mt-auto d-flex flex-column">
+                <button class="btn btn-action mb-2 btn-add-cart">
+                  <i class="bi bi-cart-plus me-1"></i>Añadir al carrito
+                </button>
+                <button class="btn btn-action btn-comprar">Comprar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>

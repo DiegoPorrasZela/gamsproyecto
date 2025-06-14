@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>GAMS Store</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
+    <link rel="stylesheet" th:href="@{/estilos/navbar.css}" />
+    <link rel="stylesheet" th:href="@{/estilos/footer.css}" />
+  </head>
+  <body>
+    <header th:replace="~{fragments/layout :: navbar}"></header>
+    <h1 id="textiles" class="text-center">GAMS</h1>
+    <div class="col-12 text-center">
+      <h5>Estilo para todos</h5>
+    </div>
+    <!-- ALERTA CONDICIONAL -->
+    <div th:if="${descuentoActivo}" class="alert alert-danger text-center mx-auto w-75">
+      🎉 ¡Descuento especial por el mes de MAYO! Usa el código <strong>GAMS25</strong>
+    </div>
+
+    <div
+      id="imagenes"
+      class="carousel slide"
+      data-bs-ride="carousel"
+      data-bs-interval="3000"
+    >
+      <div class="carousel-indicators">
+        <button
+          type="button"
+          data-bs-target="#imagenes"
+          data-bs-slide-to="0"
+          class="active"
+          aria-current="true"
+          aria-label="Slide 1"
+        ></button>
+        <button
+          type="button"
+          data-bs-target="#imagenes"
+          data-bs-slide-to="1"
+          aria-label="Slide 2"
+        ></button>
+        <button
+          type="button"
+          data-bs-target="#imagenes"
+          data-bs-slide-to="2"
+          aria-label="Slide 3"
+        ></button>
+        <button
+          type="button"
+          data-bs-target="#imagenes"
+          data-bs-slide-to="3"
+          aria-label="Slide 4"
+        ></button>
+      </div>
+      <div class="carousel-inner">
+        <div class="carousel-item active">
+          <img src="img/0001.png" class="d-block w-100" alt="..." />
+        </div>
+        <div class="carousel-item">
+          <img src="img/0002.png" class="d-block w-100" alt="..." />
+        </div>
+        <div class="carousel-item">
+          <img src="img/0003.png" class="d-block w-100" alt="..." />
+        </div>
+        <div class="carousel-item">
+          <img src="img/0004.png" class="d-block w-100" alt="..." />
+        </div>
+      </div>
+      <button
+        class="carousel-control-prev"
+        type="button"
+        data-bs-target="#imagenes"
+        data-bs-slide="prev"
+      >
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+      </button>
+      <button
+        class="carousel-control-next"
+        type="button"
+        data-bs-target="#imagenes"
+        data-bs-slide="next"
+      >
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+      </button>
+    </div>
+
+    <main class="container-fluid">
+      <div class="container py-4">
+        <div class="row align-items-center g-4">
+          <div class="col-md-6">
+            <div
+              class="bg-gradient p-5 rounded shadow-lg h-100 d-flex flex-column justify-content-center"
+              style="
+                background: linear-gradient(to bottom right, #c56001, #b93902);
+                border: 3px solid #ff4c00;
+              "
+            >
+              <i class="bi bi-lightning-charge display-1 text-warning mb-4"></i>
+              <h2 class="display-5 fw-bold text-dark">¡DESCUENTO!</h2>
+              <p class="fs-1 fw-bold text-warning">DEL 25%</p>
+              <p class="fs-5 text-dark">
+                Recibe el 25% de descuento en todo, usando el código
+                <strong class="text-info">GAMS25</strong> al pagar.
+              </p>
+            </div>
+          </div>
+          <div class="col-md-6 text-center">
+            <img
+              src="img/0005.png"
+              alt="Imagen de modelo"
+              class="img-fluid rounded shadow"
+            />
+          </div>
+        </div>
+        <div class="row mt-4">
+          <div class="col-12 text-center">
+            <div
+              class="alert alert-success"
+              role="alert"
+              style="background-color: #228d3b; color: rgb(255, 255, 255)"
+            >
+              <i class="bi bi-arrow-left-right"></i> ¡10% MENOS EN TU PRIMERA
+              COMPRA! <i class="bi bi-arrow-left-right"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>
