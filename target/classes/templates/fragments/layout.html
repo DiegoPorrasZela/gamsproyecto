@@ -56,24 +56,30 @@
                 <li class="nav-item">
                   <a class="nav-link" href="/conocenos">Conócenos</a>
                 </li>
-                <li class="nav-item">
-                  <a class="nav-link" th:href="@{/productos/nuevo}"
-                    >Añadir productos</a
-                  >
+                <!-- Solo visible para ADMIN -->
+                <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+                  <a class="nav-link" th:href="@{/productos/nuevo}">Añadir productos</a>
                 </li>
               </ul>
             </div>
-            <div class="user-icons">
-              <a href="/login" class="nav-link text-white">
-                <i class="bi bi-person-circle fs-4"></i>
-              </a>
+            <div class="user-icons d-flex align-items-center">
+              <!-- Si NO está autenticado -->
+              <th:block sec:authorize="isAnonymous()">
+                <a href="/login" class="nav-link text-white">
+                  <i class="bi bi-person-circle fs-4"></i>
+                </a>
+              </th:block>
+              <!-- Si está autenticado -->
+              <th:block sec:authorize="isAuthenticated()">
+                <span class="nav-link text-white">
+                  <i class="bi bi-person-circle fs-4"></i>
+                  <span sec:authentication="name"></span>
+                </span>
+                <a href="/logout" class="nav-link text-white">Salir</a>
+              </th:block>
               <a href="#" class="nav-link text-white position-relative">
                 <i class="bi bi-cart3 fs-4"></i>
-                <span
-                  class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-                >
-                  0
-                </span>
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
               </a>
             </div>
           </div>
