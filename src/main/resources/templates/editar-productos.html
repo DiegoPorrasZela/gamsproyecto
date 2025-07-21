@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Producto - GAMS Store</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/estilos/navbar.css}">
+    <link rel="stylesheet" th:href="@{/estilos/footer.css}">
+    <link rel="stylesheet" th:href="@{/estilos/editar-productos.css}">
+</head>
+<body>
+    <header th:replace="~{fragments/layout :: navbar}"></header>
+    
+    <div class="container mt-4">
+        <h1 class="main-title">✨ Editar Producto</h1>
+
+        <div class="form-container">
+            <!-- Mostrar mensajes de éxito o error si existen -->
+            <div th:if="${mensaje}" class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i>
+                <span th:text="${mensaje}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            
+            <form th:action="@{/productos/actualizar/{id}(id=${producto.id})}" 
+                  th:object="${producto}" 
+                  method="post"
+                  id="productoForm">
+                
+                <!-- Campo oculto para el ID -->
+                <input type="hidden" th:field="*{id}">
+                
+                <!-- Información Básica -->
+                <div class="section-card">
+                    <h3 class="section-title">
+                        <i class="bi bi-box-seam"></i>
+                        Información Básica
+                    </h3>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label required-field">Tipo/Categoría</label>
+                            <select class="form-select" th:field="*{tipo}" id="tipo" required>
+                                <option value="">Seleccionar categoría...</option>
+                                <option value="Hombres">👨 Hombres</option>
+                                <option value="Niños">👶 Niños</option>
+                                <option value="Anime">🎌 Colecciones/Anime</option>
+                                <option value="Deporte">⚽ Colecciones/Deporte</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Marca</label>
+                            <input type="text" class="form-control" th:field="*{marca}" id="marca" placeholder="Marca del producto">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">SKU</label>
+                            <input type="text" class="form-control" th:field="*{sku}" id="sku" readonly>
+                            <small class="text-muted">El SKU no se puede modificar</small>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label required-field">Nombre del Producto</label>
+                        <input type="text" class="form-control" th:field="*{nombre}" id="nombre" placeholder="Nombre descriptivo del producto" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Imagen (URL)</label>
+                        <input type="url" class="form-control" th:field="*{imagen}" id="imagen" placeholder="https://ejemplo.com/imagen.jpg">
+                    </div>
+                </div>
+                
+                <!-- Precios y Descuentos -->
+                <div class="section-card">
+                    <h3 class="section-title">
+                        <i class="bi bi-currency-dollar"></i>
+                        Precios y Descuentos
+                    </h3>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label required-field">Precio Original</label>
+                            <div class="input-group">
+                                <span class="input-group-text">S/</span>
+                                <input type="number" step="0.01" class="form-control" th:field="*{precio}" id="precio" required placeholder="0.00">
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Descuento (%)</label>
+                            <div class="input-group">
+                                <input type="number" min="0" max="100" class="form-control" id="descuentoInput" placeholder="0">
+                                <span class="input-group-text">%</span>
+                            </div>
+                            <!-- Campo oculto que se enviará al servidor con el formato correcto -->
+                            <input type="hidden" name="descuento" id="descuentoHidden" />
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Precio Final</label>
+                            <div class="input-group">
+                                <span class="input-group-text">S/</span>
+                                <input type="number" step="0.01" class="form-control" name="precioFinal" id="precioFinal" readonly style="background-color: #f8f9fa">
+                            </div>
+                            <div id="discountInfo" class="discount-info" style="display: none">
+                                <i class="bi bi-tag-fill"></i>
+                                Ahorro: S/ <span id="ahorroMonto">0.00</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Campos ocultos para enviar valores correctos -->
+                    <input type="hidden" name="precioConDescuento" id="precioConDescuentoHidden" />
+                    <input type="hidden" name="tieneDescuento" id="tieneDescuentoHidden" value="false" />
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label required-field">Costo de Adquisición</label>
+                            <div class="input-group">
+                                <span class="input-group-text">S/</span>
+                                <input type="number" step="0.01" class="form-control" th:field="*{costoAdquisicion}" id="costoAdquisicion" required placeholder="0.00">
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Margen de Ganancia</label>
+                            <div id="margenDisplay" class="price-display">
+                                Margen: <span id="margenPorcentaje">0%</span> - Ganancia: S/ <span id="gananciaMoneto">0.00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Inventario -->
+                <div class="section-card">
+                    <h3 class="section-title">
+                        <i class="bi bi-boxes"></i>
+                        Control de Inventario
+                    </h3>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Stock Actual</label>
+                            <input type="number" class="form-control" th:field="*{stock}" id="stock" min="0" placeholder="0">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Stock Mínimo</label>
+                            <input type="number" class="form-control" th:field="*{stockMinimo}" id="stockMinimo" min="0" placeholder="0">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Ubicación en Almacén</label>
+                            <input type="text" class="form-control" th:field="*{ubicacionAlmacen}" id="ubicacionAlmacen" placeholder="Ej: A-1-B">
+                        </div>
+                    </div>
+
+                    <div id="stockAlert" class="stock-alert" style="display: none">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        ¡Atención! El stock actual está por debajo del mínimo recomendado.
+                    </div>
+                </div>
+                
+                <!-- Configuración adicional -->
+                <div class="section-card">
+                    <h3 class="section-title">
+                        <i class="bi bi-gear"></i>
+                        Configuración y Proveedor
+                    </h3>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Proveedor</label>
+                            <select class="form-select" th:field="*{proveedor.id}" id="proveedor">
+                                <option value="">Seleccionar proveedor...</option>
+                                <option th:each="proveedor : ${proveedores}" 
+                                        th:value="${proveedor.id}" 
+                                        th:text="${proveedor.nombre}">
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Temporada</label>
+                            <select class="form-select" th:field="*{temporada}" id="temporada">
+                                <option value="">Seleccionar temporada...</option>
+                                <option value="primavera">Primavera</option>
+                                <option value="verano">Verano</option>
+                                <option value="otoño">Otoño</option>
+                                <option value="invierno">Invierno</option>
+                                <option value="todo_el_año">Todo el año</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">¿Envío Gratis?</label>
+                            <select class="form-select" th:field="*{envioGratis}">
+                                <option value="true">✅ Sí</option>
+                                <option value="false">❌ No</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Rating Interno (1-5)</label>
+                            <select class="form-select" th:field="*{ratingInterno}" id="ratingInterno">
+                                <option value="">Seleccionar...</option>
+                                <option value="1">⭐ 1 estrella</option>
+                                <option value="2">⭐⭐ 2 estrellas</option>
+                                <option value="3">⭐⭐⭐ 3 estrellas</option>
+                                <option value="4">⭐⭐⭐⭐ 4 estrellas</option>
+                                <option value="5">⭐⭐⭐⭐⭐ 5 estrellas</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">¿Producto Habilitado?</label>
+                            <select class="form-select" th:field="*{habilitado}">
+                                <option value="true">✅ Habilitado</option>
+                                <option value="false">❌ Deshabilitado</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Comentarios Internos</label>
+                        <textarea class="form-control" th:field="*{comentariosInternos}" id="comentariosInternos" rows="3" placeholder="Notas internas sobre el producto..."></textarea>
+                    </div>
+                </div>
+                
+                <!-- Botones -->
+                <div class="text-center">
+                    <button type="submit" class="btn btn-success btn-lg me-3">
+                        <i class="bi bi-check-circle"></i>
+                        Actualizar Producto
+                    </button>
+                    <a th:href="@{/}" class="btn btn-secondary btn-lg">
+                        <i class="bi bi-x-circle"></i>
+                        Cancelar
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const precioInput = document.getElementById("precio");
+            const descuentoInput = document.getElementById("descuentoInput");
+            const descuentoHidden = document.getElementById("descuentoHidden");
+            const precioFinalInput = document.getElementById("precioFinal");
+            const precioConDescuentoHidden = document.getElementById("precioConDescuentoHidden");
+            const tieneDescuentoHidden = document.getElementById("tieneDescuentoHidden");
+            const costoInput = document.getElementById("costoAdquisicion");
+            const stockInput = document.getElementById("stock");
+            const stockMinimoInput = document.getElementById("stockMinimo");
+            
+            // AGREGAR ESTAS LÍNEAS PARA LOS CAMPOS DE MARCA Y NOMBRE
+            const marcaInput = document.getElementById("marca");
+            const nombreInput = document.getElementById("nombre");
+
+            const discountInfo = document.getElementById("discountInfo");
+            const ahorroMonto = document.getElementById("ahorroMonto");
+            const margenPorcentaje = document.getElementById("margenPorcentaje");
+            const gananciaMoneto = document.getElementById("gananciaMoneto");
+            const stockAlert = document.getElementById("stockAlert");
+
+            // Función para extraer el valor numérico del descuento desde la BD
+            function inicializarDescuento() {
+                const descuentoBD = '[[${producto.descuento}]]';
+                if (descuentoBD && descuentoBD !== 'null') {
+                    // Extraer solo números del descuento (eliminar % y otros caracteres)
+                    const valorNumerico = descuentoBD.replace(/[^0-9.]/g, '');
+                    if (valorNumerico) {
+                        descuentoInput.value = valorNumerico;
+                    }
+                }
+            }
+
+            // Función para convertir a mayúsculas automáticamente
+            function convertirAMayusculas(input) {
+                input.addEventListener("input", function() {
+                    const cursorPosition = this.selectionStart;
+                    this.value = this.value.toUpperCase();
+                    this.setSelectionRange(cursorPosition, cursorPosition);
+                });
+            }
+
+            // Aplicar conversión a mayúsculas a los campos específicos
+            convertirAMayusculas(marcaInput);
+            convertirAMayusculas(nombreInput);
+
+            // Calcular precio con descuento
+            function calcularPrecioConDescuento() {
+                const precio = parseFloat(precioInput.value) || 0;
+                const descuento = parseFloat(descuentoInput.value) || 0;
+
+                if (precio > 0) {
+                    if (descuento > 0) {
+                        // Hay descuento
+                        const precioConDescuento = precio - (precio * descuento) / 100;
+                        const ahorro = precio - precioConDescuento;
+
+                        precioFinalInput.value = precioConDescuento.toFixed(2);
+                        precioConDescuentoHidden.value = precioConDescuento.toFixed(2);
+                        tieneDescuentoHidden.value = "true";
+                        
+                        // Preparar el valor del descuento con el símbolo %
+                        descuentoHidden.value = descuento + "%";
+
+                        ahorroMonto.textContent = ahorro.toFixed(2);
+                        discountInfo.style.display = "block";
+                    } else {
+                        // No hay descuento
+                        precioFinalInput.value = precio.toFixed(2);
+                        precioConDescuentoHidden.value = ""; // Enviar vacío para que sea null en BD
+                        tieneDescuentoHidden.value = "false";
+                        descuentoHidden.value = ""; // Enviar vacío
+
+                        discountInfo.style.display = "none";
+                    }
+                } else {
+                    precioFinalInput.value = "";
+                    precioConDescuentoHidden.value = "";
+                    tieneDescuentoHidden.value = "false";
+                    descuentoHidden.value = "";
+                    discountInfo.style.display = "none";
+                }
+
+                calcularMargen();
+            }
+
+            // Calcular margen de ganancia
+            function calcularMargen() {
+                const precioFinal = parseFloat(precioFinalInput.value) || 0;
+                const costo = parseFloat(costoInput.value) || 0;
+
+                if (precioFinal > 0 && costo > 0) {
+                    const ganancia = precioFinal - costo;
+                    const margen = (ganancia / precioFinal) * 100;
+
+                    margenPorcentaje.textContent = margen.toFixed(1) + "%";
+                    gananciaMoneto.textContent = ganancia.toFixed(2);
+                } else {
+                    margenPorcentaje.textContent = "0%";
+                    gananciaMoneto.textContent = "0.00";
+                }
+            }
+
+            // Verificar stock
+            function verificarStock() {
+                const stock = parseInt(stockInput.value) || 0;
+                const stockMinimo = parseInt(stockMinimoInput.value) || 0;
+
+                if (stockMinimo > 0 && stock <= stockMinimo) {
+                    stockAlert.style.display = "block";
+                } else {
+                    stockAlert.style.display = "none";
+                }
+            }
+
+            // Event listeners
+            precioInput.addEventListener("input", calcularPrecioConDescuento);
+            descuentoInput.addEventListener("input", calcularPrecioConDescuento);
+            costoInput.addEventListener("input", calcularMargen);
+            stockInput.addEventListener("input", verificarStock);
+            stockMinimoInput.addEventListener("input", verificarStock);
+
+            // Validación del formulario antes de enviar
+            document.getElementById("productoForm").addEventListener("submit", function (e) {
+                const descuentoNumerico = parseFloat(descuentoInput.value);
+
+                if (!descuentoNumerico || descuentoNumerico <= 0) {
+                    // Setear valores vacíos para que lleguen como null
+                    descuentoHidden.value = "";
+                    precioConDescuentoHidden.value = "";
+                } else {
+                    // Asegurarse de que el descuento se envíe con el símbolo %
+                    descuentoHidden.value = descuentoNumerico + "%";
+                }
+
+                // Confirmación antes de enviar
+                const confirmacion = confirm('¿Estás seguro de que deseas actualizar este producto?');
+                if (!confirmacion) {
+                    e.preventDefault();
+                }
+            });
+
+            // Inicializar valores al cargar
+            inicializarDescuento();
+            calcularPrecioConDescuento();
+            calcularMargen();
+            verificarStock();
+        });
+
+        // Validación adicional del formulario
+        (function() {
+            'use strict';
+            window.addEventListener('load', function() {
+                var forms = document.getElementsByTagName('form');
+                var validation = Array.prototype.filter.call(forms, function(form) {
+                    form.addEventListener('submit', function(event) {
+                        if (form.checkValidity() === false) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+            }, false);
+        })();
+    </script>
+</body>
+</html>

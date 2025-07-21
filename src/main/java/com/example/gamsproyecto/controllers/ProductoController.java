@@ -13,6 +13,9 @@ import com.example.gamsproyecto.entities.Producto;
 import com.example.gamsproyecto.repositories.ProveedorRepository;
 import com.example.gamsproyecto.services.ProductoService;
 
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 @Controller
 @RequestMapping("/productos")
 @RequiredArgsConstructor
@@ -40,5 +43,34 @@ public class ProductoController {
         productoService.guardar(producto);
         return "redirect:/";
     }
+
+@GetMapping("/editar/{id}")
+public String mostrarFormularioEditar(@PathVariable Integer id, Model model) {
+    Producto producto = productoService.buscarPorId(id);
+    if (producto == null) {
+        return "redirect:/";
+    }
+    model.addAttribute("producto", producto);
+    model.addAttribute("proveedores", proveedorRepository.findAll());
+    return "editar-productos";
+}
+
+// Actualizar producto
+@PostMapping("/actualizar/{id}")
+public String actualizarProducto(@PathVariable Integer id, @ModelAttribute Producto producto, 
+                               RedirectAttributes redirectAttributes) {
+    producto.setId(id); // Asegurar que el ID se mantenga
+    productoService.actualizar(producto);
+    redirectAttributes.addFlashAttribute("mensaje", "Producto actualizado exitosamente");
+    return "redirect:/";
+}
+
+// Eliminar producto
+@PostMapping("/eliminar/{id}")
+public String eliminarProducto(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
+    productoService.eliminar(id);
+    redirectAttributes.addFlashAttribute("mensaje", "Producto eliminado exitosamente");
+    return "redirect:/";
+}
 
 }
