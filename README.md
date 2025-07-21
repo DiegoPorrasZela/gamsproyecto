@@ -1,2 +1,0 @@
-# gamsproyecto
-trabajo con springboot

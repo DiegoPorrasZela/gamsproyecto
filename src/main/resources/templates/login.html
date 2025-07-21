@@ -20,7 +20,7 @@
     />
     <link rel="stylesheet" th:href="@{/estilos/login.css}" type="text/css" />
     <link rel="stylesheet" th:href="@{/estilos/navbar.css}" />
-    <link rel="stylesheet" th:href="@{/estilos/footer.css}">
+    <link rel="stylesheet" th:href="@{/estilos/footer.css}" />
   </head>
 
   <body>
@@ -29,11 +29,12 @@
       <div class="container" id="container">
         <div class="form-container">
           <h2>Iniciar Sesión</h2>
-          <form id="loginForm">
-            <input type="email" id="loginEmail" placeholder="Correo" required />
+          <form th:action="@{/login}" method="post">
+            <input type="text" id="username" name ="username" placeholder="Correo" required />
             <input
               type="password"
-              id="loginPassword"
+              id="password"
+              name="password"
               placeholder="Contraseña"
               required
             />
@@ -44,10 +45,7 @@
             <i class="bi bi-google"></i>
             <i class="bi bi-instagram"></i>
           </div>
-          <button
-            class="exit-button"
-            onclick="window.location.href='/'"
-          >
+          <button class="exit-button" onclick="window.location.href='/'">
             Ir a inicio
           </button>
         </div>
